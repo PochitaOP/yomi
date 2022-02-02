@@ -43,10 +43,10 @@ async def search_message_by_id(id : int, db: Session = Depends(get_db), user_id 
 # search messages that contains substring
 @router.get("/search/{message}")
 async def search_message(message: str, db: Session = Depends(get_db), user_id : int =  Depends(oauth2.get_current_user)):
-    _message = db.query(models.Message).filter(models.Message.message.contains(message)).all()
+    messages = db.query(models.Message).filter(models.Message.message.contains(message)).all()
 
-    exception_check.not_found_exception_check(_message, message)
-    return message
+    exception_check.not_found_exception_check(messages, message)
+    return messages
 
 # search all user messages
 @router.get("/search/{id}/")
@@ -59,10 +59,10 @@ async def search_user_messages(id: int, db : Session = Depends(get_db), user_id:
 # search all user messages that contain substring
 @router.get("/search/{id}/{message}")
 async def search_user_specific_message(id: int, message: str, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
-    message = db.query(models.Message).filter(models.Message.user_id == id).filter(models.Message.message.contains(message)).all()
+    messages = db.query(models.Message).filter(models.Message.user_id == id).filter(models.Message.message.contains(message)).all()
 
-    exception_check.not_found_exception_check(message, id)
-    return message
+    exception_check.not_found_exception_check(messages, id)
+    return messages
 
 # delete message
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
